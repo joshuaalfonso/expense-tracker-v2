@@ -11,7 +11,8 @@ import type { CategoriesList } from "@/models/categories"
 import { useDeleteCategory } from "./useDeleteCategory"
 import { CreateEditCategories } from "./CreateEditCategories";
 import { useState } from "react";
-
+import { Button } from "@/components/ui/button";
+import { Ellipsis } from 'lucide-react';
 
 
 export const CategoriesRow = ({row}: {row: CategoriesList}) => {
@@ -27,7 +28,7 @@ export const CategoriesRow = ({row}: {row: CategoriesList}) => {
 
     return (
         <li className="border border-[var(--color-border)] py-2 px-4 flex items-center gap-2 rounded-[var(--radius-sm)]">
-            <span className="h-">{row.category_icon}</span> 
+            <span className="text-xl">{row.category_icon}</span> 
             <span className="font-medium flex-1">{row.category_name}</span> 
 
             <CreateEditCategories row={row} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen}/>
@@ -35,9 +36,13 @@ export const CategoriesRow = ({row}: {row: CategoriesList}) => {
             <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
                 <DropdownMenuTrigger asChild className="focus:outline-none focus:ring-0 focus:ring-transparent">
                     
-                    <div className="rounded-[var(--radius-sm)] p-2 cursor-pointer hover:text-[var(--color-primary)] ease-out duration-200">
+                    {/* <div className="rounded-[var(--radius-sm)] p-2 cursor-pointer hover:text-[var(--color-primary)] ease-out duration-200">
                         <i className="fi fi-rr-menu-dots flex"></i>
-                    </div>
+                    </div> */}
+                    <Button variant="ghost">
+                        <Ellipsis />
+                        {/* <Loader2Icon className="animate-spin" /> */}
+                    </Button>
                     
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-40" align="end">

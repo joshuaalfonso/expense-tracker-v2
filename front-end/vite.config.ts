@@ -9,7 +9,8 @@ import dotenv from 'dotenv'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   define: {
-    'process.env.VITE_API_BASE_URL': JSON.stringify(process.env.VITE_API_BASE_URL)
+    'process.env.VITE_API_BASE_URL': JSON.stringify(process.env.VITE_API_BASE_URL),
+    'process.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_CLIENT_ID),
   },
   resolve: {
     alias: {

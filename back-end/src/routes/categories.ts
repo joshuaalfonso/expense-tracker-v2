@@ -45,7 +45,7 @@ categories.put('/:id', async (c) => {
       [category_name, category_icon, date_created, id]
     );
 
-    if (result.affectedRows === 0) {
+    if ((result as any[]).length === 0) {
       return c.json({ success: false, error: 'Category not found.' }, 404);
     }
 

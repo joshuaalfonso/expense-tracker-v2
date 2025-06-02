@@ -20,7 +20,7 @@ export const AppLayout = () => {
                 <nav className='flex items-center justify-between h-[50px] max-w-7xl mx-auto '>
                     <ToogleSidebar />
                     <div className='flex gap-2'>
-                        <img src="expense-logo.png" alt="Logo" width={35}/>
+                        <img src="low-price.png" alt="Logo" width={35}/>
                         <p className='flex items-center font-semibold text-xl'>Expense <span>Tracker</span></p>
                     </div>
                     <ModeToggle />
