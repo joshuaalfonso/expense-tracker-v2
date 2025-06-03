@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { conn } from "../db-conn.js";
+import { authMiddleware } from "../utils/authMiddleware.js";
 
 const categories = new Hono();
 
+categories.use('*', authMiddleware);
 
 categories.get('/', async(c) => {
     const [rows] = await conn.execute('SELECT * from categories');

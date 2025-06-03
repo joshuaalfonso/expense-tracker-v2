@@ -6,10 +6,18 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { Toaster } from "@/components/ui/sonner"
+import { useLogout } from "@/hooks/useLogout"
+import { Button } from "@/components/ui/button"
 
 export const AppLayout = () => {
 
-    const queryClient = new QueryClient()
+    const queryClient = new QueryClient();
+
+    const { logout } = useLogout();
+
+    const handleLogout = () => {
+        logout();
+    }
 
     return (
         <>
@@ -23,7 +31,15 @@ export const AppLayout = () => {
                         <img src="low-price.png" alt="Logo" width={35}/>
                         <p className='flex items-center font-semibold text-xl'>Expense <span>Tracker</span></p>
                     </div>
-                    <ModeToggle />
+                    <div>
+                        <ModeToggle />
+                        <Button 
+                            variant="outline"
+                            onClick={handleLogout}
+                        >
+                            Log out
+                        </Button>
+                    </div>
                 </nav>
             </header>
     
