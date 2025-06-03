@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import categories from './routes/categories.js';
 import { cors } from 'hono/cors';
 import { authGoogle } from './routes/auth.js';
+import { expenses } from './routes/expenses.js';
 
 const app = new Hono();
 
@@ -15,6 +16,8 @@ app.get('/', (c) => {
 app.route('/categories', categories);
 
 app.route('/auth/google', authGoogle);
+
+app.route('expenses', expenses)
 
 serve({
   fetch: app.fetch,
