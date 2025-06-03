@@ -107,14 +107,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <form>
                 <DialogTrigger asChild>
-                {/* <Button variant="outline">Open Dialog</Button> */}
                     {!isEditMode && (
-                    // <li 
-                    //     className="py-2 px-4 border rounded-[var(--radius-sm)] bg-[var(--color-primary)] text-white flex items-center justify-center"
-                    // >
-                    //     <i className="fi fi-rr-plus-small flex text-2xl"></i>
-                    //     Create Category
-                    // </li>
                         <Button variant="default">
                             <i className="fi fi-rr-plus-small flex text-xl"></i> Create
                         </Button>

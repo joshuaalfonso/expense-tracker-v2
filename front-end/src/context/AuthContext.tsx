@@ -1,6 +1,4 @@
 import { createContext, useReducer, type ReactNode, useEffect } from "react";
-import { useNavigate } from "react-router";
-
 
 type AuthState = {
     user: string | null;

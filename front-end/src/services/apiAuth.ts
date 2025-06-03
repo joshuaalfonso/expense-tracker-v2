@@ -6,4 +6,6 @@ export const googleAuth = async (idToken: string) => {
 
     const { data } = await axios.post(`${baseUrl}auth/google`, {idToken: idToken});
     return data
+
+    
 }

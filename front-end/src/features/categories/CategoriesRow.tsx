@@ -27,13 +27,29 @@ export const CategoriesRow = ({row}: {row: CategoriesList}) => {
     }
 
     return (
-        <li className="border border-[var(--color-border)] py-2 px-4 flex items-center gap-2 rounded-[var(--radius-sm)]">
-            <span className="text-xl">{row.category_icon}</span> 
-            <span className="font-medium flex-1">{row.category_name}</span> 
+        <li 
+            className="border border-[var(--color-border)] py-2 px-4 flex items-center gap-2 rounded-[var(--radius-sm)]"
+        >
+            <span className="text-xl">
+                {row.category_icon}
+            </span> 
+            
+            <span 
+                className="font-medium flex-1"
+            >
+                {row.category_name}
+            </span> 
 
-            <CreateEditCategories row={row} dialogOpen={dialogOpen} setDialogOpen={setDialogOpen}/>
+            <CreateEditCategories 
+                row={row} 
+                dialogOpen={dialogOpen} 
+                setDialogOpen={setDialogOpen}
+            />
 
-            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+            <DropdownMenu 
+                open={menuOpen} 
+                onOpenChange={setMenuOpen}
+            >
                 <DropdownMenuTrigger asChild className="focus:outline-none focus:ring-0 focus:ring-transparent">
                     
                     {/* <div className="rounded-[var(--radius-sm)] p-2 cursor-pointer hover:text-[var(--color-primary)] ease-out duration-200">

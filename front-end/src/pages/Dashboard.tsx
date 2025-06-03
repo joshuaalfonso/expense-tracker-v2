@@ -1,9 +1,21 @@
 import { ChartBarDefault } from "@/features/SampleChart"
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 
 export const Dashboard = () => {
+    const { user } = useAuthContext();
+
     return (
         <>
+            { user && (
+                <h1 className="mb-4"> 
+                    Welcome, 
+                    <span className="text-[var(--color-primary)]">
+                        {user.user.name} <span className="wave">👋</span>
+                    </span>. 
+                </h1>
+            )}
+
             <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
 
                 <div 

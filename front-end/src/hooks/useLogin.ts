@@ -2,14 +2,25 @@ import { googleAuth } from "@/services/apiAuth";
 import type { CredentialResponse } from "@react-oauth/google";
 import { useAuthContext } from "./useAuthContext";
 
+export interface authenticatedResponse {
+    message: string,
+    token: string,
+    user : User
+}
 
-
+export interface User {
+    sub: string;
+    name: string,
+    email: string,
+    picture: string,
+}
 
 export const useLogin = () => {
 
     const { dispatch } = useAuthContext();
 
     const handleCredentialResponse = async (response: CredentialResponse) => {
+        
         const idToken = response.credential;
 
         if (!idToken) {
@@ -17,14 +28,17 @@ export const useLogin = () => {
             return;
         }
         
-        response = await googleAuth(idToken);
+        const authenticatedResponse: authenticatedResponse = await googleAuth(idToken);
 
-        if (response.message === 'Authenticated') {
+        // console.log(response);
+
+        if (authenticatedResponse.message === 'Authenticated') {
+
             //save response to local storage
-            localStorage.setItem('user', JSON.stringify(response));
+            localStorage.setItem('user', JSON.stringify(authenticatedResponse));
 
             // dispatch login
-            dispatch({type: 'LOGIN', payload: response})
+            dispatch({type: 'LOGIN', payload: authenticatedResponse})
         }
 
     }
