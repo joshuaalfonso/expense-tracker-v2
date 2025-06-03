@@ -4,8 +4,6 @@ import { NavLink } from "react-router";
 import { createPortal } from 'react-dom';
 
 
-
-
 export const ToogleSidebar = () => {
 
     const [open, setOpen] = useState<boolean>(false);

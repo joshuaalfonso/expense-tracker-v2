@@ -14,26 +14,28 @@ export const App = () => {
     return (
         <Routes>
 
-            <Route element={<AppLayout />}>
+            <Route 
+                path='/login' 
+                element={ !user ? <LogIn /> : <Navigate to="/" /> }
+            />
+
+            <Route 
+                element={ user ? <AppLayout /> : <Navigate to="/login" /> }
+            >
                 <Route 
                     index 
-                    element={ user ? <Dashboard /> : <Navigate to="/login" /> } 
+                    element={ <Dashboard /> } 
                 />
                 <Route 
                     path="expenses" 
-                    element={ user ? <Expenses /> : <Navigate to="/login" />}  
+                    element={ <Expenses /> }  
                 />
                 <Route 
                     path="categories" 
-                    element={ user ? <Categories /> : <Navigate to="/login" />} 
+                    element={ <Categories /> } 
                 />
             </Route>
-
-            <Route 
-                path='/login' 
-                element={ !user ? <LogIn /> : <Navigate to="/" />}
-            />
-
+           
         </Routes>
     )
 }
