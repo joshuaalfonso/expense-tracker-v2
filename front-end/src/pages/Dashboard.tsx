@@ -11,7 +11,7 @@ export const Dashboard = () => {
                 <h1 className="mb-4"> 
                     Welcome, 
                     <span className="text-[var(--color-primary)]">
-                        {user.user.name} <span className="wave">👋</span>
+                       {' ' + user.user.name} <span className="wave">👋</span>
                     </span>. 
                 </h1>
             )}

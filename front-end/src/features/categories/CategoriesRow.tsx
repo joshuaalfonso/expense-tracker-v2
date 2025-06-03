@@ -35,7 +35,7 @@ export const CategoriesRow = ({row}: {row: CategoriesList}) => {
             </span> 
             
             <span 
-                className="font-medium flex-1"
+                className="font-medium flex-1 text-sm"
             >
                 {row.category_name}
             </span> 

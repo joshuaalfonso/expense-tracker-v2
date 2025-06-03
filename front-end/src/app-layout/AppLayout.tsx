@@ -1,47 +1,26 @@
-import { ModeToggle } from "@/components/mode-toggle"
 import { NavLink, Outlet } from "react-router"
-import { ToogleSidebar } from "./ToggleSidebar"
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import { Toaster } from "@/components/ui/sonner"
-import { useLogout } from "@/hooks/useLogout"
-import { Button } from "@/components/ui/button"
+// import { Toaster } from "@/components/ui/sonner"
+import { Header } from "./Header"
+import { ThemeToaster } from "./ThemeToaster";
 
 export const AppLayout = () => {
 
     const queryClient = new QueryClient();
 
-    const { logout } = useLogout();
-
-    const handleLogout = () => {
-        logout();
-    }
+    console.log('render')
 
     return (
         <>
 
-            <Toaster richColors theme="light"  />
+            {/* <Toaster richColors theme="light"  /> */}
 
-            <header className='z-10 px-6 fixed w-full left-0 top-0 border-b border-[var(--color-border)] backdrop-blur-sm'>
-                <nav className='flex items-center justify-between h-[50px] max-w-7xl mx-auto '>
-                    <ToogleSidebar />
-                    <div className='flex gap-2'>
-                        <img src="low-price.png" alt="Logo" width={35}/>
-                        <p className='flex items-center font-semibold text-xl'>Expense <span>Tracker</span></p>
-                    </div>
-                    <div>
-                        <ModeToggle />
-                        <Button 
-                            variant="outline"
-                            onClick={handleLogout}
-                        >
-                            Log out
-                        </Button>
-                    </div>
-                </nav>
-            </header>
+            <ThemeToaster />
+
+            <Header />
     
             <div className='min-h-dvh py-12 max-w-7xl mx-auto flex'>
                 <aside className='hidden xl:block fixed w-[276px] h-full px-4 py-8'>

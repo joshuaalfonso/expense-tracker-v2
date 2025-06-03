@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000', // replace with your backend URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // replace with your backend URL
 });
 
 // Add a request interceptor
