@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { conn } from "../db-conn.js";
-import { authMiddleware } from "../utils/authMiddleware.js";
+// import { authMiddleware } from "../utils/authMiddleware.js";
 
 export const expenses = new Hono();
 
-expenses.use('*', authMiddleware);
+// expenses.use('*', authMiddleware);
 
 expenses.get('/', async (c) => {
     const [rows] = await conn.execute(

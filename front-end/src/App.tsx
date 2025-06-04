@@ -4,7 +4,8 @@ import { Dashboard } from "./pages/Dashboard"
 import { Expenses } from "./pages/Expenses"
 import { Categories } from "./pages/Categories"
 import { LogIn } from "./pages/LogIn"
-import { useAuthContext } from "./hooks/useAuthContext"
+import { useAuthContext } from "./features/auth/useAuthContext"
+import { ProtectedRoute } from "./features/auth/ProtectedRoute"
 
 
 export const App = () => {
@@ -20,19 +21,31 @@ export const App = () => {
             />
 
             <Route 
-                element={ user ? <AppLayout /> : <Navigate to="/login" /> }
+                element={ <AppLayout />}
             >
                 <Route 
                     index 
-                    element={ <Dashboard /> } 
+                    element={ 
+                        <ProtectedRoute> 
+                            <Dashboard /> 
+                        </ProtectedRoute>
+                     } 
                 />
                 <Route 
                     path="expenses" 
-                    element={ <Expenses /> }  
+                    element={ 
+                        <ProtectedRoute> 
+                            <Expenses /> 
+                        </ProtectedRoute>
+                    }  
                 />
                 <Route 
                     path="categories" 
-                    element={ <Categories /> } 
+                    element={ 
+                        <ProtectedRoute> 
+                            <Categories /> 
+                        </ProtectedRoute>
+                     } 
                 />
             </Route>
            

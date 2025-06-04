@@ -3,8 +3,8 @@ import { ToogleSidebar } from "./ToggleSidebar"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useLogout } from "@/hooks/useLogout"
-import { useAuthContext } from "@/hooks/useAuthContext"
+import { useLogout } from "@/features/auth/useLogout"
+import { useAuthContext } from "@/features/auth/useAuthContext"
 
 
 

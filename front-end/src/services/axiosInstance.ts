@@ -11,7 +11,7 @@ axiosInstance.interceptors.request.use((config) => {
 
   if (user) {
     const parsedUser = JSON.parse(user); // Parse the stored string to an object
-    config.headers.Authorization = `Bearer ${parsedUser.token}`;
+    config.headers.Authorization = `Bearer ${parsedUser.jwt}`;
   }
 
   return config;

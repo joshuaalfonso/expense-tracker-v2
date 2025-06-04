@@ -2,11 +2,19 @@ import { createContext, useReducer, type ReactNode, useEffect } from "react";
 
 type AuthState = {
     user: string | null;
+    loading: boolean
 };
+
+const initialState: AuthState = {
+  user: null,
+  loading: true
+};
+
 
 type AuthAction = 
   | { type: 'LOGIN'; payload: string }
-  | { type: 'LOGOUT' };
+  | { type: 'LOGOUT' }
+  | { type: 'SET_LOADING'; payload: boolean }
 
 export const AuthContext = createContext<any>(null);
 
@@ -14,33 +22,38 @@ export const authReducer = (state: AuthState, action: AuthAction) => {
     switch(action.type) {
         case 'LOGIN':
             return {
-                user: action.payload
+                user: action.payload, loading: false
             }
         case 'LOGOUT': 
             return {
-                user: null
+                user: null, loading: false
             }
+        case 'SET_LOADING':
+      return { ...state, loading: action.payload };
 
             default :
                 return state
     }
 }
 
-
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
-    const [state, dispatch] = useReducer(authReducer, {
-        user: null
-    });
+    const [state, dispatch] = useReducer(authReducer, initialState);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
 
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
+            const expiresAt = parsedUser.user.exp * 1000;
+            const now = Date.now();
 
-            dispatch({ type: 'LOGIN', payload: parsedUser })
+            if (expiresAt >= now) {
+                dispatch({ type: 'LOGIN', payload: parsedUser })
+            }
         } 
+
+        dispatch({ type: 'SET_LOADING', payload: false }); // Done checking
     }, [])
 
     console.log('AuthState :', state);

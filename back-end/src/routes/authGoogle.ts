@@ -1,0 +1,75 @@
+import { Hono } from "hono";
+import { decodeJwt, SignJWT } from "jose";
+import { conn } from "../db-conn.js";
+
+
+export const authGoogle = new Hono();
+
+authGoogle.post('/', async (c) => {
+
+    const body = await c.req.json();
+    const code = body.code;
+
+    if (!code) return c.json({ error: 'Missing code' }, 400);
+
+    // Exchange code for tokens
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: 'postmessage',
+        grant_type: 'authorization_code',
+        }),
+    });
+
+    const tokenData = await tokenRes.json();
+
+    if (!tokenRes.ok) {
+        return c.json({ error: 'Token exchange failed', details: tokenData }, 500);
+    }
+
+    const { id_token } = tokenData;
+
+    // Decode Google ID token to get user info
+    const user = decodeJwt(id_token);
+
+    const { email, name, picture, sub: google_Id } = user;
+
+    // check if the user exist in db
+    const [rows] = await conn.execute(
+        `SELECT * FROM users WHERE email = ?`,
+        [email]
+    );
+    
+    let existingUsers = (rows as any[])[0];
+
+    if (!existingUsers) {
+        
+        // Insert user if not exists
+        const [result]: any = await conn.execute(
+            `INSERT INTO users (email, name, picture, google_id) VALUES (?, ?, ?, ?)`,
+            [email, name, picture, google_Id]
+        )
+
+        // You may want to fetch the inserted user again
+        const [newRows]: any = await conn.execute(
+            `SELECT * FROM users WHERE id = ?`,
+            [result.insertId]
+        )
+        const newUser = newRows[0]
+    }
+
+     // Create custom JWT
+    const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const customToken = await new SignJWT({ sub: user.sub, email: user.email })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('1h')
+    .sign(jwtSecret);
+
+    return c.json({ jwt: customToken, user });
+
+})

@@ -1,18 +1,21 @@
 import { fetchExpenses } from "@/services/apiExpenses";
 import { useQuery } from "@tanstack/react-query"
 import { ExpensesRow } from "./ExpensesRow";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 
 export const ExpensesList = () => {
-
-    // const queryClient = useQueryClient();
 
     const {data, isPending, error} = useQuery({
         queryFn: fetchExpenses,
         queryKey: ['expenses']
     })
 
-    if (isPending) return <p>Loading..</p>;
+    if (isPending) return (
+        <div className="flex justify-center">
+            <LoadingSpinner />
+        </div>
+    );
 
     if (error) return <p>{error.message || 'An error occured while fetching data.'}</p>
 

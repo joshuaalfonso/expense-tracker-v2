@@ -2,8 +2,8 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import categories from './routes/categories.js';
 import { cors } from 'hono/cors';
-import { authGoogle } from './routes/auth.js';
 import { expenses } from './routes/expenses.js';
+import { authGoogle } from './routes/authGoogle.js';
 
 const app = new Hono();
 

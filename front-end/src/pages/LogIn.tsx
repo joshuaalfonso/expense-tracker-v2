@@ -1,25 +1,21 @@
 
-import { useLogin } from '@/hooks/useLogin';
-import { GoogleLogin  } from '@react-oauth/google';
-
+import { Button } from '@/components/ui/button';
+import { useLogin } from '@/features/auth/useLogin';
 
 export const LogIn = () => {
 
-    const { handleCredentialResponse } = useLogin();
+   const { login } = useLogin();
 
     return (
         <>
             <div className='h-dvh w-full flex items-center justify-center'>
-                <div className="max-w-7xl bg-red-100 mx-auto">
-                    <GoogleLogin
-                        onSuccess={credentialResponse => {
-                            // console.log(credentialResponse);
-                            handleCredentialResponse(credentialResponse)
-                        }}
-                        onError={() => {
-                            console.log('Login Failed');
-                        }}
-                    />
+                <div className="max-w-7xl mx-auto">
+                     <Button 
+                        variant="secondary"
+                        onClick={() => login()}
+                    >
+                        <div><img src='google.png' width={18}/></div> Sign in with Google 
+                    </Button>
                 </div>
             </div>
         </>
