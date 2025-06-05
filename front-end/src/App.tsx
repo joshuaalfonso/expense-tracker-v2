@@ -21,30 +21,28 @@ export const App = () => {
             />
 
             <Route 
-                element={ <AppLayout />}
+                element={ <ProtectedRoute> <AppLayout /></ProtectedRoute>}
             >
                 <Route 
                     index 
                     element={ 
-                        <ProtectedRoute> 
-                            <Dashboard /> 
-                        </ProtectedRoute>
+                        <Dashboard /> 
                      } 
                 />
                 <Route 
                     path="expenses" 
                     element={ 
-                        <ProtectedRoute> 
+                        // <ProtectedRoute> 
                             <Expenses /> 
-                        </ProtectedRoute>
+                        // </ProtectedRoute>
                     }  
                 />
                 <Route 
                     path="categories" 
                     element={ 
-                        <ProtectedRoute> 
+                        // <ProtectedRoute> 
                             <Categories /> 
-                        </ProtectedRoute>
+                        // </ProtectedRoute>
                      } 
                 />
             </Route>

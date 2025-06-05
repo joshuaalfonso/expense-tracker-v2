@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/features/auth/useAuthContext";
+import { ChartPieDonut } from "@/features/ChartPieDonut";
 import { ChartBarDefault } from "@/features/SampleChart"
 
 
@@ -56,11 +57,15 @@ export const Dashboard = () => {
 
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
                 {/* <div className="border border-[var(--color-border)] rounded-[var(--radius-sm)] p-4"> */}
                     <ChartBarDefault />
+
+                    <ChartPieDonut />
                 {/* </div> */}
             </div>
+
+
 
         </>
     )

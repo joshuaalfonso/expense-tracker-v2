@@ -50,6 +50,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
             if (expiresAt >= now) {
                 dispatch({ type: 'LOGIN', payload: parsedUser })
+            } else {
+                localStorage.removeItem('user');
+                dispatch({ type: 'LOGOUT'})
             }
         } 
 

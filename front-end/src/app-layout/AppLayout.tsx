@@ -11,7 +11,7 @@ export const AppLayout = () => {
 
     const queryClient = new QueryClient();
 
-    console.log('render')
+    console.log('App layout init')
 
     return (
         <>

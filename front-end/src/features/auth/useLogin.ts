@@ -1,26 +1,42 @@
 
 import { useGoogleLogin } from "@react-oauth/google";
 import { useAuthContext } from "./useAuthContext";
+import { useState } from "react";
 
 
 export const useLogin = () => {
 
     const { dispatch } = useAuthContext();
 
+    const [error, setError] = useState('');
+
     const login = useGoogleLogin({
         onSuccess: async (codeResponse) => {
   
-            // Send to your backend for token exchange and custom JWT creation
-            const res = await fetch('http://localhost:3000/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: codeResponse.code }),
-            });
+           try {
+                // Send to your backend for token exchange and custom JWT creation
+                const res = await fetch('http://localhost:3000/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: codeResponse.code }),
+                });
 
-            const userData = await res.json();
+                // throw error if token exchange failed
+                if (!res.ok) {
+                    console.error(await res.json())
+                    throw new Error('An unknown error occurred while logging in.');
+                }
+            
+                const userDataResponse = await res.json();
 
-            localStorage.setItem('user', JSON.stringify(userData));
-            dispatch({type: 'LOGIN', payload: userData})
+                // store user to localStorage and authContext
+                localStorage.setItem('user', JSON.stringify(userDataResponse));
+                dispatch({type: 'LOGIN', payload: userDataResponse})
+           }
+
+           catch (error: any) {
+                setError(error.message)
+           }
         },
         onError: (error) => {
             console.log('google auth :' + error)
@@ -28,7 +44,7 @@ export const useLogin = () => {
         flow: 'auth-code',
     });
 
-    return { login }
+    return { login, error }
 
 
 }

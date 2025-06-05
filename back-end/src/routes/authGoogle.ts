@@ -67,7 +67,7 @@ authGoogle.post('/', async (c) => {
     const customToken = await new SignJWT({ sub: user.sub, email: user.email })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1h')
+    .setExpirationTime('1hr')
     .sign(jwtSecret);
 
     return c.json({ jwt: customToken, user });
