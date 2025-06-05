@@ -62,14 +62,20 @@ authGoogle.post('/', async (c) => {
         const newUser = newRows[0]
     }
 
+    const tokenPayload = {
+        sub: user.sub,
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + 7200, // Math.floor(Date.now() / 1000) + 10
+    };
+
      // Create custom JWT
     const jwtSecret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const customToken = await new SignJWT({ sub: user.sub, email: user.email })
+    const customToken = await new SignJWT(tokenPayload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1hr')
+    .setExpirationTime(tokenPayload.exp)
     .sign(jwtSecret);
 
-    return c.json({ jwt: customToken, user });
+    return c.json({ jwt: customToken, user: {...user, exp: tokenPayload.exp} });
 
 })
