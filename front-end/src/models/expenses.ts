@@ -14,3 +14,12 @@ export interface ExpensesList {
   email: string
   picture: string
 }
+
+
+export interface ExpensesPost {
+  id: number | null,
+  date: string,
+  category_id: number,
+  amount: number,
+  description: string | null,
+}

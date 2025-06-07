@@ -6,5 +6,5 @@ import { Toaster } from '@/components/ui/sonner' // or wherever Toaster is impor
 export const ThemeToaster = () => {
   const { theme } = useTheme();
 
-  return <Toaster richColors theme={theme} position="bottom-right"/>
+  return <Toaster richColors theme={theme} position="top-center"/>
 }

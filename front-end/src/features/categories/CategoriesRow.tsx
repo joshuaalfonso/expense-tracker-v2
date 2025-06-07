@@ -52,12 +52,8 @@ export const CategoriesRow = ({row}: {row: CategoriesList}) => {
             >
                 <DropdownMenuTrigger asChild className="focus:outline-none focus:ring-0 focus:ring-transparent">
                     
-                    {/* <div className="rounded-[var(--radius-sm)] p-2 cursor-pointer hover:text-[var(--color-primary)] ease-out duration-200">
-                        <i className="fi fi-rr-menu-dots flex"></i>
-                    </div> */}
                     <Button variant="ghost">
                         <Ellipsis />
-                        {/* <Loader2Icon className="animate-spin" /> */}
                     </Button>
                     
                 </DropdownMenuTrigger>

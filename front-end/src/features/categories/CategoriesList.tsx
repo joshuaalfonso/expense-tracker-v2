@@ -8,7 +8,7 @@ import { CategoriesRow } from "./CategoriesRow";
 export const CategoriesList = () => {
 
     const [dialogOpen, setDialogOpen] = useState(false);
-    const { data, isPending, error } = useCategories();
+    const { data: categories, isPending, error } = useCategories();
 
     if (isPending) return (
         <div className="flex justify-center">
@@ -29,13 +29,7 @@ export const CategoriesList = () => {
             </div>
 
             <ul className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
-                {/* <li 
-                    className="py-2 px-4 border rounded-[var(--radius-sm)] bg-[var(--color-primary)] text-white flex items-center justify-center"
-                >
-                    <i className="fi fi-rr-plus-small flex text-2xl"></i>
-                    Create Category
-                </li> */}
-                {data?.map(row => (
+                {categories?.map(row => (
                     <CategoriesRow row={row} key={row.id}/>
                 ))}
             </ul>

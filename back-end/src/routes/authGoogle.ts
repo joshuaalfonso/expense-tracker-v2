@@ -45,6 +45,7 @@ authGoogle.post('/', async (c) => {
     );
     
     let existingUsers = (rows as any[])[0];
+    let user_id = null;
 
     if (!existingUsers) {
         
@@ -59,10 +60,14 @@ authGoogle.post('/', async (c) => {
             `SELECT * FROM users WHERE id = ?`,
             [result.insertId]
         )
-        const newUser = newRows[0]
+        const newUser = newRows[0];
+        user_id = newUser.id;
+    } else {
+        user_id = existingUsers.id;
     }
 
     const tokenPayload = {
+        user_id,
         sub: user.sub,
         email: user.email,
         exp: Math.floor(Date.now() / 1000) + 7200, // Math.floor(Date.now() / 1000) + 10
@@ -76,6 +81,6 @@ authGoogle.post('/', async (c) => {
     .setExpirationTime(tokenPayload.exp)
     .sign(jwtSecret);
 
-    return c.json({ jwt: customToken, user: {...user, exp: tokenPayload.exp} });
+    return c.json({ jwt: customToken, user: {...user, exp: tokenPayload.exp, user_id} });
 
 })

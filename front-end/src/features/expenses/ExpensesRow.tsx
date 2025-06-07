@@ -3,6 +3,7 @@ import { format } from "date-fns"
 
 
 
+
 export const ExpensesRow = ({row}: {row: ExpensesList}) => {
     return (
         <li className="border border-[var(--color-border)] py-2 px-4 flex items-center justify-between gap-2 rounded-[var(--radius-sm)]">

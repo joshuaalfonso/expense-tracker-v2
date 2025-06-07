@@ -185,7 +185,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                     <FormItem>
                                         <FormLabel>Category Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field} tabIndex={-1} />
+                                            <Input placeholder="" {...field} tabIndex={-1} autoComplete="off" />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

@@ -3,7 +3,6 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-// import { Toaster } from "@/components/ui/sonner"
 import { Header } from "./Header"
 import { ThemeToaster } from "./ThemeToaster";
 
@@ -11,19 +10,17 @@ export const AppLayout = () => {
 
     const queryClient = new QueryClient();
 
-    console.log('App layout init')
+    // console.log('App layout init')
 
     return (
         <>
-
-            {/* <Toaster richColors theme="light"  /> */}
 
             <ThemeToaster />
 
             <Header />
     
             <div className='min-h-dvh py-12 max-w-7xl mx-auto flex'>
-                <aside className='hidden xl:block fixed w-[276px] h-full px-4 py-8'>
+                <aside className='hidden xl:block fixed w-[276px] h-full  py-8 pr-6'>
                 <ul className="space-y-2">
                     <li>
                         <NavLink to="/">
@@ -46,7 +43,7 @@ export const AppLayout = () => {
                 </ul>
                 </aside>
         
-                <main className='xl:ml-[276px] flex-1 py-8 px-6'>
+                <main className='xl:ml-[276px] flex-1 py-8 px-6 xl:px-0 '>
                     <QueryClientProvider client={queryClient}>
                         <Outlet />
                     </QueryClientProvider>
