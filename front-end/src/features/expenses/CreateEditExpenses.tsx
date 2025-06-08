@@ -7,22 +7,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { CategoriesList } from "@/models/categories";
-import { createExpense } from "@/services/apiExpenses";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@radix-ui/react-select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { format, isValid } from "date-fns";
+import { CalendarIcon, Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
-
-
+import { useCreateExpense } from "./useCreateExpense";
+import type { ExpensesList } from "@/models/expenses";
+import { useEditExpense } from "./useEditExpense";
 
 const formSchema = z.object({
-
     id: z.number().nullable(),
     date: z.date({
         required_error: "A date is required.",
@@ -33,65 +28,103 @@ const formSchema = z.object({
     amount: z.string().min(1, {
         message: "This field is required."
     }),
-    description: z.string(),
-    date_created: z.string().nullable()
+    description: z.string()
 })
 
 interface Props {
-  categories: CategoriesList[]; // <- ✅ Array
-  isCategoriesLoading: boolean;
-  categoriesError: Error | null;
+    row?: ExpensesList,
+    categories?: CategoriesList[]; // <- ✅ Array
+    isCategoriesLoading?: boolean;
+    categoriesError?: Error | null;
+    dialogOpen: boolean,
+    setDialogOpen: (open: boolean) => void
 }
 
-interface ErrorResponse {
-  error: string;
-}
+export const CreateEditExpenses = ({
+    row = {} as ExpensesList,
+    categories, 
+    isCategoriesLoading, 
+    categoriesError, 
+    dialogOpen, 
+    setDialogOpen}: Props
+) => {
 
+    const { id } = row;
 
-export const CreateEditExpenses = ({categories, isCategoriesLoading, categoriesError}: Props) => {
+    const isEditMode = Boolean(id);
 
-    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const safeDate = (value: string) => {
+        const date = value ? new Date(value) : undefined;
+        return date && isValid(date) ? date : undefined;
+    };
+
+    // console.log(row.date)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            id: null,
-            date: undefined,
-            category_id: '',
-            amount: '',
-            description: '',
-            date_created: null,
-        }  
+        defaultValues:  row
+    ? {
+        id: row.id ?? null,
+        date: safeDate(row.date), 
+        category_id: String(row.category_id ?? ''),
+        amount: String(row.amount ?? ''),
+        description: row.description ?? '',
+      }
+    : {
+        id: null,
+        date: new Date(), 
+        category_id: '',
+        amount: '',
+        description: '',
+      },
     })
 
-    const queryClient = useQueryClient();
+    const { createExpenseMutattion, isCreating } = useCreateExpense();
 
-    const { mutate: createExpenseMutattion, isPending: isCreating } = useMutation({
-        mutationFn: createExpense,
-        onSuccess: () => {
-            toast.success('Successfully created!');
-            queryClient.invalidateQueries({
-                queryKey: ['expenses']
-            })
-        },
-        onError: (err: AxiosError<ErrorResponse>) => {
-            console.log(err)
-            toast.error(err.response?.data?.error  || 'An error occured while creaint expense.')
-        }
-    });
+    const { editExpenseMutation, isUpdating } = useEditExpense();
+
+    const isWorking = isCreating || isUpdating;
+
 
     function onSubmit(data: z.infer<typeof formSchema>) {
+
+        // console.log(data)
 
         const formattedDate = format(data.date, 'yyyy-MM-dd');
         const formattedCategory = Number(data.category_id);
         const formattedAmount = Number(data.amount);
 
-        createExpenseMutattion({
+        const newExpense = {
             ...data, 
             date: formattedDate, 
             category_id: formattedCategory,
             amount: formattedAmount
-        })
+        }
+
+
+        if (isEditMode) {
+            editExpenseMutation(
+                newExpense,
+                {
+                    onSuccess: () => {
+                        setDialogOpen(false);
+                        form.reset();
+                    }
+                }
+            )
+        } 
+        
+        else {
+            createExpenseMutattion(
+                newExpense,
+                {
+                    onSuccess: () => {
+                        setDialogOpen(false);
+                        form.reset();
+                    }
+                }
+            )
+        } 
 
     }
 
@@ -99,9 +132,11 @@ export const CreateEditExpenses = ({categories, isCategoriesLoading, categoriesE
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                   <Button variant="default">
-                        <i className="fi fi-rr-plus-small flex text-xl"></i> Create
-                    </Button>
+                    {!isEditMode && (
+                        <Button variant="default">
+                            <i className="fi fi-rr-plus-small flex text-xl"></i> Create
+                        </Button>
+                    )}
                 </DialogTrigger>
 
                 <DialogContent className="sm:max-w-[425px]">
@@ -218,7 +253,7 @@ export const CreateEditExpenses = ({categories, isCategoriesLoading, categoriesE
                                             <span className="opacity-70 text-xs">(Optional)</span>
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field} tabIndex={-1}  />
+                                            <Input placeholder=""{...field} value={field.value ?? ''}  tabIndex={-1}  />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -230,8 +265,9 @@ export const CreateEditExpenses = ({categories, isCategoriesLoading, categoriesE
                                 <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                <Button type="submit" disabled={isCreating}>
-                                    Create
+                                <Button type="submit" disabled={isWorking && !form.formState.isDirty}>
+                                    { isWorking && <Loader2Icon className="animate-spin" /> }
+                                    { isEditMode ? 'Apply changes' : 'Create' }
                                 </Button>
                             </DialogFooter>
 

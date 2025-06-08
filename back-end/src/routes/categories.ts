@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { conn } from "../db-conn.js";
-// import { authMiddleware } from "../utils/authMiddleware.js";
 import { jwt } from "hono/jwt";
 import { authMiddleware } from "../middleware/auth.js";
+import { type ResultSetHeader } from 'mysql2';
 
 const categories = new Hono();
 
@@ -68,11 +68,16 @@ categories.delete('/:categories_id', async (c) => {
     const id = c.req.param('categories_id');
 
     try {
-        const [result] = await conn.execute(
-            `DELETE FROM categories WHERE id = ?`, [id]
-        )
 
-         return c.json({ success: true, result });
+      const [result] = await conn.execute<ResultSetHeader>(
+          `DELETE FROM categories WHERE id = ?`, [id]
+      )
+
+      if (result.affectedRows === 0) {
+        return c.json({ success: false, message: 'No expense found with that ID.' }, 404);
+      }
+
+      return c.json({ success: true, result });
     }
 
     catch {

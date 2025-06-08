@@ -4,6 +4,7 @@ import categories from './routes/categories.js';
 import { cors } from 'hono/cors';
 import { expenses } from './routes/expenses.js';
 import { authGoogle } from './routes/authGoogle.js';
+import { dashboard } from './routes/dashboard.js';
 
 const app = new Hono();
 
@@ -17,7 +18,9 @@ app.route('/categories', categories);
 
 app.route('/auth/google', authGoogle);
 
-app.route('expenses', expenses)
+app.route('expenses', expenses);
+
+app.route('dashboard', dashboard);
 
 serve({
   fetch: app.fetch,

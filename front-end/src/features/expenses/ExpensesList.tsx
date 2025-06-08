@@ -4,13 +4,13 @@ import { ExpensesRow } from "./ExpensesRow";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { CreateEditExpenses } from "./CreateEditExpenses";
 import { useCategories } from "../categories/useCategories";
-// import { useState } from "react";
-// import { Button } from "@/components/ui/button";
+import { useState } from "react";
+
 
 export const ExpensesList = () => {
 
-    // const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+     
     const {data, isPending, error} = useQuery({
         queryFn: fetchExpenses,
         queryKey: ['expenses']
@@ -34,20 +34,26 @@ export const ExpensesList = () => {
 
     return (
         <>
-            {/* <Button onClick={() => setIsDialogOpen(true)}>Open</Button> */}
             <div className="flex justify-end mb-4">
                 <CreateEditExpenses 
                     categories={categories || []}
                     isCategoriesLoading={isCategoriesLoading}
                     categoriesError={categoriesError}
+                    dialogOpen={dialogOpen}
+                    setDialogOpen={setDialogOpen}
                 />
             </div>
             <ul className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
                 {data?.map(row => (
-                    <ExpensesRow row={row} key={row.id} />
+                    <ExpensesRow 
+                        row={row} 
+                        key={row.id}
+                        categories={categories || []}
+                        isCategoriesLoading={isCategoriesLoading}
+                        categoriesError={categoriesError} 
+                    />
                 ))}
             </ul>
-
         </>
     )
 }
