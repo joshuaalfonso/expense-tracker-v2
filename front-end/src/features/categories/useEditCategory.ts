@@ -13,7 +13,7 @@ export const useEditCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: ['categories']
             });
-            toast.success('Category successfully updated.')
+            toast.success('Successfully updated.')
         },
         onError: (err) => {
             toast.error(err.message || 'An error occured while updating the data.')

@@ -89,9 +89,9 @@ expenses.get('/page/:page', async (c) => {
   console.log(total)
 
   return c.json({
-    data: rows,                // the paginated records
-    currentPage: page,         // current page number
-    perPage: limit,            // items per page
+    data: rows,                
+    currentPage: page,         
+    perPage: limit, 
     total,
     totalPages: Math.ceil(total / limit)
   });

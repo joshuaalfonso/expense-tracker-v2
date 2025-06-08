@@ -139,7 +139,10 @@ export const CreateEditExpenses = ({
                     )}
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent 
+                    className="sm:max-w-[425px]" 
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                >
                     <DialogHeader>
                         <DialogTitle>Create Expenses</DialogTitle>
                         <DialogDescription>
@@ -161,7 +164,7 @@ export const CreateEditExpenses = ({
                                         </FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
-                                                <FormControl>
+                                                <FormControl tabIndex={-1} >
                                                     <Button
                                                         variant={"outline"}
                                                         className={cn(
@@ -203,8 +206,8 @@ export const CreateEditExpenses = ({
                                         <FormLabel>Category <span className="text-[var(--color-destructive)]">*</span></FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
                                             <FormControl>
-                                            <SelectTrigger className="w-full" disabled={isCategoriesLoading}>
-                                                <SelectValue placeholder={isCategoriesLoading ? 'Loading...' : 'Select'} />
+                                            <SelectTrigger className="w-full" disabled={isCategoriesLoading} >
+                                                <SelectValue placeholder={isCategoriesLoading ? 'Loading...' : 'Select'}  />
                                             </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -236,7 +239,7 @@ export const CreateEditExpenses = ({
                                     <FormItem>
                                         <FormLabel>Amount <span className="text-[var(--color-destructive)]">*</span></FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="" {...field} tabIndex={-1}  />
+                                            <Input type="number" placeholder="" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -253,19 +256,18 @@ export const CreateEditExpenses = ({
                                             <span className="opacity-70 text-xs">(Optional)</span>
                                         </FormLabel>
                                         <FormControl>
-                                            <Input placeholder=""{...field} value={field.value ?? ''}  tabIndex={-1}  />
+                                            <Input placeholder=""{...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
         
                             <DialogFooter>
-                                <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <DialogClose asChild >
+                                    <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                <Button type="submit" disabled={isWorking && !form.formState.isDirty}>
+                                <Button type="submit" disabled={isWorking && !form.formState.isDirty} >
                                     { isWorking && <Loader2Icon className="animate-spin" /> }
                                     { isEditMode ? 'Apply changes' : 'Create' }
                                 </Button>

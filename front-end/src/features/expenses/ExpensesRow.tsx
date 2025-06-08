@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import type { ExpensesList } from "@/models/expenses"
 import { format } from "date-fns"
 import { EllipsisVertical } from "lucide-react"
-import { useState } from "react"
+import React, { useState } from "react"
 import { CreateEditExpenses } from "./CreateEditExpenses"
 import type { CategoriesList } from "@/models/categories"
 import { formatNumber } from "@/utils/formatNumber"
@@ -18,7 +18,7 @@ interface Props {
 }
 
 
-export const ExpensesRow = ({row = {} as ExpensesList, categories, isCategoriesLoading, categoriesError}: Props) => {
+const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategoriesLoading, categoriesError}: Props) => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -31,6 +31,8 @@ export const ExpensesRow = ({row = {} as ExpensesList, categories, isCategoriesL
     const handleCategoryDelete = () => {
         deleteExpenseMutation(row.id)
     }
+
+    console.log('Expense row')
 
     return (
         <li className="border border-[var(--color-border)] py-2 px-4 flex items-center justify-between gap-2 rounded-[var(--radius-sm)]">
@@ -84,3 +86,5 @@ export const ExpensesRow = ({row = {} as ExpensesList, categories, isCategoriesL
         </li>
     )
 }
+
+export const ExpensesRow = React.memo(ExpensesRowComponent);

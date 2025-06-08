@@ -14,7 +14,7 @@ export const useEditExpense = () => {
             queryClient.invalidateQueries({
                 queryKey: ['expenses']
             });
-            toast.success('Expense successfully updated.')
+            toast.success('Successfully updated!')
         },
         onError: (err) => {
             toast.error(err.message || 'An error occured while updating the data.')

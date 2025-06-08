@@ -114,7 +114,10 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                     )}
                 </DialogTrigger>
 
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent 
+                    className="sm:max-w-[425px]"  
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                >
                     <DialogHeader>
                         <DialogTitle>Create Category</DialogTitle>
                         <DialogDescription>
@@ -135,7 +138,6 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                             <div className="flex gap-2 max-h-[400px] overflow-y-auto">
                                                 <Input 
                                                     placeholder="" {...field} 
-                                                    tabIndex={-1} 
                                                     disabled={true}
                                                 />
                                                 <Popover 
@@ -146,7 +148,6 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                                     <PopoverTrigger asChild>
                                                         <Button 
                                                             type="button" 
-                                                            tabIndex={-1}
                                                         >
                                                             Pick
                                                         </Button>
@@ -165,7 +166,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                                             form.setValue('category_icon', emoji, {shouldValidate: true})
                                                             }}
                                                         >
-                                                            <EmojiPickerSearch tabIndex={-1}/>
+                                                            <EmojiPickerSearch />
                                                             <EmojiPickerContent />
                                                             <EmojiPickerFooter />
                                                         </EmojiPicker>
@@ -185,7 +186,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                     <FormItem>
                                         <FormLabel>Category Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="" {...field} tabIndex={-1} autoComplete="off" />
+                                            <Input placeholder="" {...field} autoComplete="off" />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
