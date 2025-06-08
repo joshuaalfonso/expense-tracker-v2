@@ -56,8 +56,6 @@ export const description = "A donut chart"
 
 export function DashboardTopCategories({topCategories}: {topCategories: TopCategories[]}) {
 
-    console.log(topCategories)
-
     const chartData = topCategories.map((item, index) => ({
         category: item.category_name,
         count: item.count,

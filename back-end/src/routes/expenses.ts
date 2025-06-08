@@ -41,7 +41,65 @@ expenses.get('/', async (c) => {
 })
 
 
-expenses.post('', async (c) => {
+expenses.get('/page/:page', async (c) => {
+
+  const page = parseInt(c.req.param('page') || '1');
+
+  const {user_id} = c.get('jwtPayload');
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const [rows] = await conn.execute(
+    `
+      SELECT 
+        e.id,
+        e.date,
+        c.id AS category_id,
+        c.category_name,
+        c.category_icon,
+        e.amount,
+        e.description,
+        u.id AS user_id,
+        u.name,
+        u.email,
+        u.picture
+      FROM 
+        expenses AS e
+      LEFT JOIN
+        categories AS c
+        ON e.category_id = c.id
+      LEFT JOIN
+        users AS u
+        ON e.user_id = u.id
+      WHERE 
+        user_id = ? 
+        ORDER BY date 
+        DESC LIMIT ? OFFSET ?
+    `,
+    [user_id, limit, offset]
+  );
+
+  const [totalResponse] = await conn.execute(
+    `SELECT COUNT(*) as total FROM expenses WHERE user_id = ?`,
+    [user_id]
+  );
+
+  const total = (totalResponse as any[])[0].total;
+  console.log(total)
+
+  return c.json({
+    data: rows,                // the paginated records
+    currentPage: page,         // current page number
+    perPage: limit,            // items per page
+    total,
+    totalPages: Math.ceil(total / limit)
+  });
+
+})
+
+
+expenses.post('/', async (c) => {
 
     const body = await c.req.json();
 

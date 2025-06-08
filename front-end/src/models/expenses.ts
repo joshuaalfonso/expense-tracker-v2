@@ -1,6 +1,14 @@
 
 
 
+export interface PaginatedExpenseList {
+  data: ExpensesList[],
+  currentPage: number,
+  perPage: number,
+  total: number,
+  totalPages: number
+}
+
 export interface ExpensesList {
   id: number
   date: string
