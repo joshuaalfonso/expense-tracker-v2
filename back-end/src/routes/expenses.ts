@@ -86,7 +86,7 @@ expenses.get('/page/:page', async (c) => {
   );
 
   const total = (totalResponse as any[])[0].total;
-  console.log(total)
+  // console.log(total)
 
   return c.json({
     data: rows,                
@@ -101,26 +101,31 @@ expenses.get('/page/:page', async (c) => {
 
 expenses.post('/', async (c) => {
 
-    const body = await c.req.json();
+  const body = await c.req.json();
 
-    const {user_id} = c.get('jwtPayload');
+  const {user_id} = c.get('jwtPayload');
 
-    const { id, date, category_id, amount, description } = body;
+  const { id, date, category_id, amount, description } = body;
 
-    try {
-        const [result] = await conn.execute(
+  try {
+      const [result] = await conn.execute(
         `INSERT INTO expenses (id, date, category_id, amount, description, user_id)
         VALUES (?, ?, ?, ?, ?, ?)`,
         [id, date, category_id, amount, description, user_id]
-        );
+      );
 
-        return c.json({ success: true, result });
-    } 
-  
-    catch (error) {
-        console.error(error);
-        return c.json({ success: false, error: 'Failed to insert expense.' }, 500);
-    }
+      await conn.execute(
+        `UPDATE user_totals SET total_expense = total_expense + ? WHERE user_id = ?`,
+        [amount, user_id]
+      )
+
+      return c.json({ success: true, result });
+  } 
+
+  catch (error) {
+      console.error(error);
+      return c.json({ success: false, error: 'Failed to insert expense.' }, 500);
+  }
 
 })
 
@@ -128,8 +133,9 @@ expenses.post('/', async (c) => {
 expenses.put('/:id', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json();
+  const {user_id} = c.get('jwtPayload');
 
-  const { date, category_id, amount, description } = body;
+  const { date, category_id, amount, oldAmount, description } = body;
 
   try {
     const [result] = await conn.execute(
@@ -143,6 +149,11 @@ expenses.put('/:id', async (c) => {
       return c.json({ success: false, error: 'Expense not found.' }, 404);
     }
 
+    await conn.execute(
+      `UPDATE user_totals SET total_expense = total_expense - ? + ? WHERE user_id = ?`,
+      [oldAmount, amount, user_id]
+    )
+
     return c.json({ success: true, result, message: 'Successfully updated!' });
   } 
   
@@ -154,9 +165,12 @@ expenses.put('/:id', async (c) => {
 });
 
 
-expenses.delete('/:expense_id', async (c) => {
+expenses.delete('/:expense_id/:amount', async (c) => {
 
   const id = c.req.param('expense_id');
+  const amount = c.req.param('amount');
+
+  const {user_id} = c.get('jwtPayload');
 
   try {
     
@@ -168,6 +182,11 @@ expenses.delete('/:expense_id', async (c) => {
           id = ?
       `,
       [id]
+    )
+
+    await conn.execute(
+      `UPDATE user_totals SET total_expense = total_expense - ? WHERE user_id = ?`,
+      [amount, user_id]
     )
 
     if (result.affectedRows === 0) {

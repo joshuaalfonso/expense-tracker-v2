@@ -29,10 +29,10 @@ const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategorie
     } = useDeleteExpense();
 
     const handleCategoryDelete = () => {
-        deleteExpenseMutation(row.id)
+        deleteExpenseMutation(row)
     }
 
-    console.log('Expense row')
+    console.log('Expense row :' + row.id)
 
     return (
         <li className="border border-[var(--color-border)] py-2 px-4 flex items-center justify-between gap-2 rounded-[var(--radius-sm)]">
@@ -49,7 +49,7 @@ const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategorie
                 row={row} 
                 dialogOpen={dialogOpen} 
                 setDialogOpen={setDialogOpen}
-                 categories={categories || []}
+                categories={categories || []}
                 isCategoriesLoading={isCategoriesLoading}
                 categoriesError={categoriesError}
             />

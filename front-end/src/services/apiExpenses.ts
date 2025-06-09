@@ -24,7 +24,7 @@ export const editExpense = async (expense: ExpensesPost) => {
     return data;
 }
 
-export const deleteExpense = async (expense_id: number) => {
-    const { data } = await axios.delete(`${baseUrl}${tableName}${'/' + expense_id}`);
+export const deleteExpense = async (expensePost: ExpensesList) => {
+    const { data } = await axios.delete(`${baseUrl}${tableName}${'/' + expensePost.id}${'/' + expensePost.amount}`);
     return data;
 }

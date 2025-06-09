@@ -28,6 +28,7 @@ const formSchema = z.object({
     amount: z.string().min(1, {
         message: "This field is required."
     }),
+    oldAmount: z.string(),
     description: z.string()
 })
 
@@ -68,6 +69,7 @@ export const CreateEditExpenses = ({
         date: safeDate(row.date), 
         category_id: String(row.category_id ?? ''),
         amount: String(row.amount ?? ''),
+        oldAmount: String(row.amount ?? ''),
         description: row.description ?? '',
       }
     : {
@@ -75,6 +77,7 @@ export const CreateEditExpenses = ({
         date: new Date(), 
         category_id: '',
         amount: '',
+        oldAmount: '',
         description: '',
       },
     })
@@ -93,12 +96,14 @@ export const CreateEditExpenses = ({
         const formattedDate = format(data.date, 'yyyy-MM-dd');
         const formattedCategory = Number(data.category_id);
         const formattedAmount = Number(data.amount);
+        const formattedOldAmount = Number(data.oldAmount);
 
         const newExpense = {
             ...data, 
             date: formattedDate, 
             category_id: formattedCategory,
-            amount: formattedAmount
+            amount: formattedAmount,
+            oldAmount: formattedOldAmount
         }
 
 

@@ -29,5 +29,6 @@ export interface ExpensesPost {
   date: string,
   category_id: number,
   amount: number,
+  oldAmount: number,
   description: string | null,
 }

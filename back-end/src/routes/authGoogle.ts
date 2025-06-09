@@ -55,14 +55,24 @@ authGoogle.post('/', async (c) => {
             [email, name, picture, google_Id]
         )
 
+        const insertId = result.insertId;
+
+        // Insert initial total for user
+        await conn.execute(
+            `INSERT INTO user_totals (user_id, total_expense) VALUES (?, ?)`,
+            [insertId, 0]
+        );
+
         // You may want to fetch the inserted user again
         const [newRows]: any = await conn.execute(
             `SELECT * FROM users WHERE id = ?`,
-            [result.insertId]
+            [insertId]
         )
         const newUser = newRows[0];
         user_id = newUser.id;
-    } else {
+    } 
+    
+    else {
         user_id = existingUsers.id;
     }
 
