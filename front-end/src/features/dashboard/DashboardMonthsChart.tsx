@@ -51,17 +51,18 @@ export function DashboardMonthsChart( {monthsExpense}: {monthsExpense: MonthsExp
                   <CartesianGrid vertical={false} />
                   <XAxis
                       dataKey="month_name"
-                      tickLine={false}
+                      tickLine={true}
                       tickMargin={10}
                       axisLine={false}
+                      tick={{ fontSize: 10 }}
                       tickFormatter={(value) => value.slice(0, 3)}
                   />
-                   <YAxis domain={[0, maxValue + 200]} />
+                   <YAxis domain={[0, maxValue + 200]} hide={true}/>
                   <ChartTooltip
                       cursor={false}
                       content={<ChartTooltipContent indicator="line" />}
                   />
-                  <Bar dataKey="total" fill="var(--color-desktop)" radius={8} />
+                  <Bar dataKey="total" fill="var(--color-desktop)" radius={5}/>
               </BarChart>
               </ChartContainer>
           </CardContent>

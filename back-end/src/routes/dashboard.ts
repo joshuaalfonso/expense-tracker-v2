@@ -9,15 +9,16 @@ dashboard.use('*', authMiddleware);
 dashboard.get('/summary', async (c) => {
 
     const {user_id} = c.get('jwtPayload');
+    const yearNow = new Date().getFullYear();
 
     const [totalRows] = await conn.execute(
         `
             SELECT 
-                SUM(amount) AS total_expense
+                total_expense
             FROM 
-                expenses
+                user_totals
             WHERE 
-                amount > 0 AND user_id = ?
+                user_id = ?
         `,
         [user_id]
     )
@@ -60,10 +61,10 @@ dashboard.get('/summary', async (c) => {
 
     const [monthsExpense] = await conn.execute(
         `
-            SELECT 
-                months.month_number,
-                months.month_name,
-                IFNULL(SUM(e.amount), 0) AS total
+            SELECT
+                m.month_number,
+                m.month_name,
+                IFNULL(u.total, 0) AS total
             FROM (
                 SELECT 1 AS month_number, 'January' AS month_name UNION
                 SELECT 2, 'February' UNION
@@ -77,27 +78,36 @@ dashboard.get('/summary', async (c) => {
                 SELECT 10, 'October' UNION
                 SELECT 11, 'November' UNION
                 SELECT 12, 'December'
-            ) AS months
+            ) AS m
             LEFT JOIN 
-                expenses e
-                ON MONTH(e.date) = months.month_number
-                AND YEAR(e.date) = YEAR(CURDATE())
-                AND e.amount > 0
-                AND e.user_id = ?
-            GROUP BY 
-                months.month_number, months.month_name
+                monthly_totals u
+            ON 
+                u.month = m.month_number AND u.user_id = ? AND u.year = ?
             ORDER BY 
-                months.month_number
+                m.month_number;
         `,
-        [user_id]
-    ) 
+        [user_id, yearNow]
+    )
+    
+    const [averagePerMonth] = await conn.execute(
+        `
+            SELECT 
+                AVG(total) AS average_monthly
+            FROM 
+                monthly_totals
+            WHERE 
+                user_id = ? AND year = ?;
+        `,
+        [user_id, yearNow]
+    )
 
 
     return c.json({
         totalExpense: (totalRows as any[])[0]?.total_expense ?? 0,
         monthExpense: (monthRows as any[])[0]?.month_expense ?? 0,
         topCategories: categoryRows,
-        monthsExpense: monthsExpense
+        monthsExpense: monthsExpense,
+        averagePerMonth: (averagePerMonth as any[])[0].average_monthly ?? 0
     })
 
 })

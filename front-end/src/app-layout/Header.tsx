@@ -24,7 +24,7 @@ export const Header = () => {
                 <ToogleSidebar />
                 <div className='flex gap-2'>
                     <img src="low-price.png" alt="Logo" width={35}/>
-                    <p className='flex items-center font-semibold text-xl'>Expense <span>Tracker</span></p>
+                    <p className='flex items-center font-semibold xl:text-xl'>Expense <span>Tracker</span></p>
                 </div>
                 <div className="flex gap-2 items-center">
 
@@ -40,7 +40,7 @@ export const Header = () => {
                     <div>
                         {user && (
                             <Avatar>
-                                <AvatarImage src={user.user?.picture} />
+                                <AvatarImage src={user.user.picture} />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                         )}

@@ -5,6 +5,7 @@
 export interface DashboardSummary {
   totalExpense: string
   monthExpense: string
+  averagePerMonth: string
   topCategories: TopCategories[]
   monthsExpense: MonthsExpense[]
 }

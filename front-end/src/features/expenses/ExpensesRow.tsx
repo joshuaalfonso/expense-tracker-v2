@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import type { ExpensesList } from "@/models/expenses"
-import { format } from "date-fns"
+import { format, isToday } from "date-fns"
 import { EllipsisVertical } from "lucide-react"
 import React, { useState } from "react"
 import { CreateEditExpenses } from "./CreateEditExpenses"
@@ -32,7 +32,8 @@ const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategorie
         deleteExpenseMutation(row)
     }
 
-    console.log('Expense row :' + row.id)
+    const isItToday = isToday(new Date(row.date));
+    // console.log('Expense row :' + row.id)
 
     return (
         <li className="border border-[var(--color-border)] py-2 px-4 flex items-center justify-between gap-2 rounded-[var(--radius-sm)]">
@@ -40,7 +41,9 @@ const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategorie
                 <div className="text-3xl flex items-center">{row.category_icon}</div>
                 <div className="flex flex-col gap-0.5">
                     <span className="font-medium text-sm w-30 truncate ">{row.category_name}</span>
-                    <span className="text-xs font-medium opacity-70">{row.date ? format(new Date(row.date), "yyyy-MM-dd") : "No date"}</span>
+                    <span className="text-xs font-medium opacity-70">
+                        {(isItToday ? 'Today' : format(new Date(row.date), "yyyy-MM-dd")) || "No date"}
+                    </span>
                 </div>
             </div>
             <div className="text-[var(--color-destructive)]">- {formatNumber(row.amount)}</div>

@@ -107,24 +107,44 @@ expenses.post('/', async (c) => {
 
   const { id, date, category_id, amount, description } = body;
 
+  const year = new Date(date).getFullYear();
+  const month = new Date(date).getMonth() + 1;
+
+  const transaction_conn = await conn.getConnection();
+
   try {
-      const [result] = await conn.execute(
-        `INSERT INTO expenses (id, date, category_id, amount, description, user_id)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-        [id, date, category_id, amount, description, user_id]
-      );
 
-      await conn.execute(
-        `UPDATE user_totals SET total_expense = total_expense + ? WHERE user_id = ?`,
-        [amount, user_id]
-      )
+    await transaction_conn.beginTransaction();
 
-      return c.json({ success: true, result });
+    const [result] = await transaction_conn.execute(
+      `INSERT INTO expenses (id, date, category_id, amount, description, user_id)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [id, date, category_id, amount, description, user_id]
+    );
+
+    await transaction_conn.execute(
+      `UPDATE user_totals SET total_expense = total_expense + ? WHERE user_id = ?`,
+      [amount, user_id]
+    )
+
+    await transaction_conn.execute(`
+      INSERT INTO monthly_totals (user_id, year, month, total)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE total = total + VALUES(total)
+    `, [user_id, year, month, amount]);
+
+    await transaction_conn.commit();
+    return c.json({ success: true, result });
   } 
 
   catch (error) {
-      console.error(error);
-      return c.json({ success: false, error: 'Failed to insert expense.' }, 500);
+    await transaction_conn.rollback();
+    console.error(error);
+    return c.json({ success: false, error: 'Failed to insert expense.' }, 500);
+  }
+
+  finally {
+    transaction_conn.release();
   }
 
 })
@@ -135,31 +155,88 @@ expenses.put('/:id', async (c) => {
   const body = await c.req.json();
   const {user_id} = c.get('jwtPayload');
 
-  const { date, category_id, amount, oldAmount, description } = body;
+  const { 
+    date: newDate, 
+    category_id: newCategoryId, 
+    amount: newAmount,  
+    description: newDescription 
+  } = body;
+
+  const transaction_conn = await conn.getConnection();
 
   try {
-    const [result] = await conn.execute(
+    await transaction_conn.beginTransaction();
+
+    // 1. Get the original expense
+    const [rows] = await transaction_conn.execute(
+      `SELECT amount, date FROM expenses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if ((rows as any[]).length === 0) {
+      return c.json({ success: false, message: 'Expense not found' }, 404);
+    }
+
+    const { 
+      amount: oldAmount, 
+      date: OldDate  
+    } = (rows as any[])[0];
+
+    const oldYear = new Date(OldDate).getFullYear();
+    const oldMonth = new Date(OldDate).getMonth() + 1;
+
+    const newYear = new Date(newDate).getFullYear();
+    const newMonth = new Date(newDate).getMonth() + 1;
+
+    // Subtract from old month
+    await transaction_conn.execute(
+      `UPDATE monthly_totals SET total = total - ? WHERE user_id = ? AND year = ? AND month = ?`,
+      [oldAmount, user_id, oldYear, oldMonth]
+    );
+
+    await transaction_conn.execute(`
+      DELETE FROM monthly_totals
+      WHERE user_id = ? AND year = ? AND month = ? AND total <= 0
+    `, [user_id, oldYear, oldMonth]);
+
+    // Add to new month (INSERT ON DUPLICATE KEY UPDATE)
+    await transaction_conn.execute(
+      `
+        INSERT INTO monthly_totals (user_id, year, month, total)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE total = total + VALUES(total)
+      `,
+      [user_id, newYear, newMonth, newAmount]
+    );
+
+    const [result] = await transaction_conn.execute(
       `UPDATE expenses
        SET date = ?, category_id = ?, amount = ?, description = ?
        WHERE id = ?`,
-      [date, category_id, amount, description, id]
+      [newDate, newCategoryId, newAmount, newDescription, id]
     );
 
     if ((result as any[]).length === 0) {
       return c.json({ success: false, error: 'Expense not found.' }, 404);
     }
 
-    await conn.execute(
+    await transaction_conn.execute(
       `UPDATE user_totals SET total_expense = total_expense - ? + ? WHERE user_id = ?`,
-      [oldAmount, amount, user_id]
+      [oldAmount, newAmount, user_id]
     )
 
+    await transaction_conn.commit();
     return c.json({ success: true, result, message: 'Successfully updated!' });
   } 
   
   catch (error) {
+    await transaction_conn.rollback();
     console.error('Update error:', error);
     return c.json({ success: false, error: 'Failed to update expense.' }, 500);
+  }
+
+  finally {
+    transaction_conn.release();
   }
   
 });
@@ -172,9 +249,41 @@ expenses.delete('/:expense_id/:amount', async (c) => {
 
   const {user_id} = c.get('jwtPayload');
 
+  const transaction_conn = await conn.getConnection();
+
   try {
-    
-    const [result] = await conn.execute<ResultSetHeader>(
+    await transaction_conn.beginTransaction();
+
+    // Step 1: Get the expense info
+    const [rows] = await transaction_conn.execute(
+      `SELECT amount, date FROM expenses WHERE id = ? AND user_id = ?`,
+      [id, user_id]
+    );
+
+    if ((rows as any[]).length === 0) {
+      return c.json({ success: false, message: 'Expense not found' }, 404);
+    }
+
+    const { date } = (rows as any[])[0];
+    const year = new Date(date).getFullYear();
+    const month = new Date(date).getMonth() + 1;
+
+    //  Update monthly summary
+    await transaction_conn.execute(
+      `
+        UPDATE monthly_totals
+        SET total = total - ?
+        WHERE user_id = ? AND year = ? AND month = ?
+      `,
+      [amount, user_id, year, month]
+    );
+
+    await transaction_conn.execute(`
+      DELETE FROM monthly_totals
+      WHERE user_id = ? AND year = ? AND month = ? AND total <= 0
+    `, [user_id, year, month]);
+
+    const [result] = await transaction_conn.execute<ResultSetHeader>(
       `
         DELETE FROM 
           expenses
@@ -184,21 +293,28 @@ expenses.delete('/:expense_id/:amount', async (c) => {
       [id]
     )
 
-    await conn.execute(
+    if (result.affectedRows === 0) {
+      return c.json({ success: false, message: 'No expense found with that ID.' }, 404);
+    }
+
+    await transaction_conn.execute(
       `UPDATE user_totals SET total_expense = total_expense - ? WHERE user_id = ?`,
       [amount, user_id]
     )
 
-    if (result.affectedRows === 0) {
-      return c.json({ success: false, message: 'No expense found with that ID.' }, 404);
-    }
+    await transaction_conn.commit();
 
     return c.json({ success: true, result, message: 'Successfully deleted!' });
   }
 
   catch(error) {
+    await transaction_conn.rollback();
     console.error('Delete error: ' + error);
     return c.json({ success: false, message: 'Failed to delete expense.' }, 500);
+  }
+  
+  finally {
+    transaction_conn.release();
   }
 
 })
