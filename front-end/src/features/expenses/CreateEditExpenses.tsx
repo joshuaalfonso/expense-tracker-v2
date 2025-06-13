@@ -146,8 +146,8 @@ export const CreateEditExpenses = ({
 
                 <DialogContent 
                     className="sm:max-w-[425px]" 
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                >
+                    >
+                    {/* onOpenAutoFocus={(e) => e.preventDefault()} */}
                     <DialogHeader>
                         <DialogTitle>Create Expenses</DialogTitle>
                         <DialogDescription>
@@ -272,7 +272,7 @@ export const CreateEditExpenses = ({
                                 <DialogClose asChild >
                                     <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                <Button type="submit" disabled={isWorking && !form.formState.isDirty} >
+                                <Button type="submit" disabled={isWorking || !form.formState.isDirty} >
                                     { isWorking && <Loader2Icon className="animate-spin" /> }
                                     { isEditMode ? 'Apply changes' : 'Create' }
                                 </Button>

@@ -61,10 +61,12 @@ export const ExpensesList = () => {
             </div>
 
             {paginatedData.data?.length === 0 && (
-                <p className="text-center col-span-full">No expenses found.</p>
+                 <div className="h-[200px] grid place-items-center bg-[var(--color-input]) rounded-[var(--radius-sm)]">
+                    <p className="text-center col-span-full opacity-70">No expenses found.</p>
+                </div>
             )}
 
-            <ul className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+            <ul className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
                 {paginatedData.data?.map(row => (
                     <ExpensesRow 
                         row={row} 

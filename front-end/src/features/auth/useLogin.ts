@@ -10,8 +10,12 @@ export const useLogin = () => {
 
     const [error, setError] = useState('');
 
+     const [loading, setLoading] = useState(false);
+
     const login = useGoogleLogin({
         onSuccess: async (codeResponse) => {
+
+            setLoading(true)
   
            try {
                 // Send to your backend for token exchange and custom JWT creation
@@ -34,9 +38,13 @@ export const useLogin = () => {
                 dispatch({type: 'LOGIN', payload: userDataResponse})
            }
 
-           catch (error: any) {
-                setError(error.message)
-           }
+            catch (error: any) {
+                    setError(error.message)
+            }
+
+            finally {
+                setLoading(false);
+            }
         },
         onError: (error) => {
             console.log('google auth :' + error)
@@ -44,7 +52,7 @@ export const useLogin = () => {
         flow: 'auth-code',
     });
 
-    return { login, error }
+    return { login, error, loading }
 
 
 }

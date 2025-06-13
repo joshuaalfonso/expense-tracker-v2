@@ -49,7 +49,7 @@ dashboard.get('/summary', async (c) => {
             ON
                 expenses.category_id = categories.id
             WHERE 
-                user_id = ?
+                expenses.user_id = ?
             GROUP BY 
                 category_id
             ORDER 

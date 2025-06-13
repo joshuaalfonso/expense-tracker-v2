@@ -7,7 +7,6 @@ import { useLogout } from "@/features/auth/useLogout"
 import { useAuthContext } from "@/features/auth/useAuthContext"
 
 
-
 export const Header = () => {
 
     const { logout } = useLogout();
@@ -17,6 +16,10 @@ export const Header = () => {
     const handleLogout = () => {
         logout();
     }
+
+    const url = user.user?.picture;
+    const image = new Image();
+    image.src = url;
 
     return (
         <header className='z-10 px-6 fixed w-full left-0 top-0 border-b border-[var(--color-border)] backdrop-blur-sm'>
@@ -37,6 +40,7 @@ export const Header = () => {
                     >
                         <LogOut />
                     </Button>
+
                     <div>
                         {user && (
                             <Avatar>

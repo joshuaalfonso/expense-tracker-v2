@@ -9,7 +9,13 @@ const categories = new Hono();
 categories.use('*', authMiddleware);
 
 categories.get('/',  async(c) => {
-    const [rows] = await conn.execute('SELECT * from categories');
+
+    const {user_id} = c.get('jwtPayload');
+  
+    const [rows] = await conn.execute(
+      `SELECT * from categories WHERE user_id = ? AND is_del = ?`,
+      [user_id, 0] 
+    );
     return c.json(rows);
 })
 
@@ -18,11 +24,13 @@ categories.post('/', async (c) => {
 
   const { id, category_name, category_icon, date_created } = body;
 
+  const {user_id} = c.get('jwtPayload');
+
   try {
     const [result] = await conn.execute(
-      `INSERT INTO categories (id, category_name, category_icon, date_created)
-       VALUES (?, ?, ?, ?)`,
-      [id, category_name, category_icon, date_created]
+      `INSERT INTO categories (id, user_id, category_name, category_icon, date_created)
+       VALUES (?, ?, ?, ?, ?)`,
+      [id, user_id, category_name, category_icon, date_created]
     );
 
     return c.json({ success: true, result });
@@ -43,9 +51,12 @@ categories.put('/:id', async (c) => {
 
   try {
     const [result] = await conn.execute(
-      `UPDATE categories
-       SET category_name = ?, category_icon = ?, date_created = ?
-       WHERE id = ?`,
+      `UPDATE 
+        categories
+       SET 
+        category_name = ?, category_icon = ?, date_created = ?
+       WHERE 
+        id = ?`,
       [category_name, category_icon, date_created, id]
     );
 
@@ -70,7 +81,14 @@ categories.delete('/:categories_id', async (c) => {
     try {
 
       const [result] = await conn.execute<ResultSetHeader>(
-          `DELETE FROM categories WHERE id = ?`, [id]
+          `
+            UPDATE 
+              categories 
+            SET 
+              is_del = ? 
+            WHERE 
+              id = ?`, 
+          [1, id]
       )
 
       if (result.affectedRows === 0) {
@@ -81,7 +99,7 @@ categories.delete('/:categories_id', async (c) => {
     }
 
     catch {
-        return c.json({ success: false, error: 'Failed to delete category.' }, 500);
+        return c.json({ success: false, message: 'Failed to delete category.' }, 500);
     }
 
 })

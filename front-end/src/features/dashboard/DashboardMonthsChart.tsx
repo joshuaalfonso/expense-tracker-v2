@@ -57,7 +57,7 @@ export function DashboardMonthsChart( {monthsExpense}: {monthsExpense: MonthsExp
                       tick={{ fontSize: 10 }}
                       tickFormatter={(value) => value.slice(0, 3)}
                   />
-                   <YAxis domain={[0, maxValue + 200]} hide={true}/>
+                   <YAxis domain={[0, maxValue + 200]} hide={false}/> 
                   <ChartTooltip
                       cursor={false}
                       content={<ChartTooltipContent indicator="line" />}

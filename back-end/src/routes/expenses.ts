@@ -47,7 +47,7 @@ expenses.get('/page/:page', async (c) => {
 
   const {user_id} = c.get('jwtPayload');
 
-  const limit = 10;
+  const limit = 4;
   const offset = (page - 1) * limit;
 
   const [rows] = await conn.execute(
@@ -73,11 +73,11 @@ expenses.get('/page/:page', async (c) => {
         users AS u
         ON e.user_id = u.id
       WHERE 
-        user_id = ? 
+        e.user_id = ? 
         ORDER BY date 
         DESC LIMIT ? OFFSET ?
     `,
-    [user_id, limit, offset]
+    [user_id, String(limit), String(offset)]
   );
 
   const [totalResponse] = await conn.execute(

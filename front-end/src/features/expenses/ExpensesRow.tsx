@@ -41,12 +41,12 @@ const ExpensesRowComponent = ({row = {} as ExpensesList, categories, isCategorie
                 <div className="text-3xl flex items-center">{row.category_icon}</div>
                 <div className="flex flex-col gap-0.5">
                     <span className="font-medium text-sm w-30 truncate ">{row.category_name}</span>
-                    <span className="text-xs font-medium opacity-70">
-                        {(isItToday ? 'Today' : format(new Date(row.date), "yyyy-MM-dd")) || "No date"}
+                    <span className="text-xs opacity-70">
+                        {(isItToday ? 'Today' : format(new Date(row.date), "MMM d, yyyy")) || "No date"}
                     </span>
                 </div>
             </div>
-            <div className="text-[var(--color-destructive)]">- {formatNumber(row.amount)}</div>
+            <div className="text-[var(--color-destructive)] ">- {formatNumber(row.amount)}</div>
 
             <CreateEditExpenses
                 row={row} 

@@ -116,7 +116,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
 
                 <DialogContent 
                     className="sm:max-w-[425px]"  
-                    onOpenAutoFocus={(e) => e.preventDefault()}
+                  
                 >
                     <DialogHeader>
                         <DialogTitle>Create Category</DialogTitle>
@@ -197,7 +197,7 @@ export const CreateEditCategories = ({row = {} as CategoriesList,dialogOpen, set
                                 <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                                 </DialogClose>
-                                <Button type="submit" disabled={isWorking}>
+                                <Button type="submit" disabled={isWorking || !form.formState.isDirty}>
                                     {isWorking && <Loader2Icon className="animate-spin" />}
                                     {isEditMode ? 'Apply changes' : 'Create'}
                                 </Button>

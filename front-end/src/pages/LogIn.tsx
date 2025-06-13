@@ -2,11 +2,11 @@
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useLogin } from '@/features/auth/useLogin';
-import { ShieldAlertIcon } from 'lucide-react';
+import { Loader2Icon, ShieldAlertIcon } from 'lucide-react';
 
 export const LogIn = () => {
 
-   const { login, error } = useLogin();
+   const { login, error, loading } = useLogin();
 
     return (
         <>
@@ -23,8 +23,13 @@ export const LogIn = () => {
                      <Button 
                         variant="secondary"
                         onClick={() => login()}
+                        disabled={loading}
                     >
-                        <div><img src='google.png' width={18}/></div> Sign in with Google 
+                        { loading ? 
+                            <Loader2Icon className='animate-spin'/> : 
+                            <img src='google.png' width={18}/>
+                        }
+                            Sign in with Google 
                     </Button>
                 </div>
             </div>

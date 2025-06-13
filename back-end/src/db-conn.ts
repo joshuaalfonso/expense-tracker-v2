@@ -3,9 +3,18 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 // Create a MySQL connection pool
+
 export const conn = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
 })
+
+// export const conn = mysql.createPool({
+//     host: '74.208.201.196',
+//     user: 'skadi',
+//     password: 'Jacksparrow123!',
+//     database: 'expense_tracker',
+//     port: 3306
+// })

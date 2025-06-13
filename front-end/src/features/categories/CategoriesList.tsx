@@ -28,6 +28,12 @@ export const CategoriesList = () => {
                 />
             </div>
 
+            {categories?.length === 0 && (
+                <div className="h-[200px] grid place-items-center bg-[var(--color-input]) rounded-[var(--radius-sm)]">
+                    <p className="text-center col-span-full opacity-70">No categories found.</p>
+                </div>
+            )}
+
             <ul className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
                 {categories?.map(row => (
                     <CategoriesRow row={row} key={row.id}/>
