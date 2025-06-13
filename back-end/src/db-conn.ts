@@ -11,10 +11,3 @@ export const conn = mysql.createPool({
     database: process.env.DB_NAME,
 })
 
-// export const conn = mysql.createPool({
-//     host: '74.208.201.196',
-//     user: 'skadi',
-//     password: 'Jacksparrow123!',
-//     database: 'expense_tracker',
-//     port: 3306
-// })
